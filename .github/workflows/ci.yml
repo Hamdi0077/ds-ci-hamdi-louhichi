@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  build:
+    name: Build and package microservices
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 and cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build ds-account-service
+        working-directory: ds-account-service
+        run: mvn -B -DskipTests=false package
+
+      - name: Upload ds-account-service artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-account-service-jar
+          path: ds-account-service/target/*.jar
+
+      - name: Build ds-api-gateway
+        working-directory: ds-api-gateway
+        run: mvn -B -DskipTests=false package
+
+      - name: Upload ds-api-gateway artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-api-gateway-jar
+          path: ds-api-gateway/target/*.jar
+
+      - name: Build ds-client-service
+        working-directory: ds-client-service
+        run: mvn -B -DskipTests=false package
+
+      - name: Upload ds-client-service artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-client-service-jar
+          path: ds-client-service/target/*.jar
