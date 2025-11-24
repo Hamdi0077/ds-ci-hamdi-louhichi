@@ -11,6 +11,12 @@ jobs:
   build:
     name: Build and package microservices
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      REPO_API: api-gateway
+      REPO_CLIENT: client-service
+      REPO_ACCOUNT: account-service
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
